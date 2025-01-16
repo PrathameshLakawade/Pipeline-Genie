@@ -1,0 +1,6 @@
+CREATE TABLE pipelines (
+    id SERIAL PRIMARY KEY,
+    file_path TEXT NOT NULL,
+    status VARCHAR(20) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
