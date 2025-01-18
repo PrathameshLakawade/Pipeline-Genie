@@ -1,8 +1,8 @@
-from core.s3_connection import s3_client
+from fastapi import Request
 from core.logging import logger
 from core.config import settings
 
-def upload_to_s3(file, file_name: str, bucket_name: str = settings.AWS_S3_BUCKET):
+def upload_to_s3(request: Request, file, file_name: str, bucket_name: str = settings.AWS_S3_BUCKET):
     """
     Upload a file to S3.
 
@@ -15,10 +15,13 @@ def upload_to_s3(file, file_name: str, bucket_name: str = settings.AWS_S3_BUCKET
         str: Success message.
     """
     try:
+        s3_client = request.app.state.s3_client
         if not s3_client:
             raise Exception("S3 client is not initialized!")
+        
+        object_key = f"bronze/{file_name}"
 
-        s3_client.upload_fileobj(file.file, bucket_name, file_name)
+        s3_client.upload_fileobj(file.file, bucket_name, object_key)
         logger.info(f"File {file_name} successfully uploaded to bucket {bucket_name}.")
         return True
     except Exception as e:
@@ -26,7 +29,7 @@ def upload_to_s3(file, file_name: str, bucket_name: str = settings.AWS_S3_BUCKET
         raise Exception(f"Failed to upload file: {str(e)}")
 
 
-def remove_from_s3(file_name: str, bucket_name: str = settings.AWS_S3_BUCKET):
+def remove_from_s3(request: Request, file_name: str, bucket_name: str = settings.AWS_S3_BUCKET):
     """
     Remove a file from S3.
 
@@ -38,6 +41,7 @@ def remove_from_s3(file_name: str, bucket_name: str = settings.AWS_S3_BUCKET):
         str: Success message.
     """
     try:
+        s3_client = request.app.state.s3_client
         if not s3_client:
             raise Exception("S3 client is not initialized!")
 
