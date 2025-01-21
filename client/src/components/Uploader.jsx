@@ -6,7 +6,7 @@ import { Button } from 'primereact/button';
 import { Tooltip } from 'primereact/tooltip';
 import { Tag } from 'primereact/tag';
 
-export default function Uploader() {
+export default function Uploader({ onSuccess }) {
     const toast = useRef(null);
     const [totalSize, setTotalSize] = useState(0);
     const fileUploadRef = useRef(null);
@@ -34,20 +34,21 @@ export default function Uploader() {
         try {
             const formData = new FormData();
             e.files.forEach((file) => {
-                formData.append('file', file);
+                formData.append('files', file);
             });
-
+        
             const response = await fetch('http://localhost:8000/s3/upload', {
                 method: 'POST',
                 body: formData,
             });
-
+        
             if (response.ok) {
                 const result = await response.json();
-                toast.current.show({ severity: 'success', summary: 'Success', detail: result.message || 'File Uploaded' });
-                onTemplateClear()
+                toast.current.show({ severity: 'success', summary: 'Success', detail: result.message || 'Successfully Uploaded Files!' });
+                onTemplateClear();
+                if (onSuccess) onSuccess(result.file_name);
             } else {
-                toast.current.show({ severity: 'error', summary: 'Error', detail: 'Failed to upload file' });
+                toast.current.show({ severity: 'error', summary: 'Error', detail: 'Failed to upload files' });
             }
         } catch (error) {
             console.error('Upload error:', error);
@@ -122,7 +123,7 @@ export default function Uploader() {
 
             <FileUpload
                 ref={fileUploadRef}
-                name="file"
+                name="files"
                 url="http://localhost:8000/s3/upload"
                 multiple
                 accept=".csv"
