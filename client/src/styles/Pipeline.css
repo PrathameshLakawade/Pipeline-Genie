@@ -9,5 +9,5 @@ body {
 
 #card {
     width: 75rem;
-    height: 40rem;
+    height: fit-content;
 }

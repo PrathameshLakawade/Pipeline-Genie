@@ -35,3 +35,14 @@ async def generate_metadata(request: Request, file_name: str):
             return {"status": "failed"}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+    
+
+@router.post("/clean/{file_name}")
+async def clean_data(request: Request, file_name: str):
+    try:
+        spark = request.app.state.spark_session
+        
+        
+        return {"status": "success"}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))

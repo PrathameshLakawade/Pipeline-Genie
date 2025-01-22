@@ -21,8 +21,8 @@ export default function Pipeline() {
             <StepperPanel header="Choose Data">
                 <Uploader onSuccess={handleUploadSuccess} />
             </StepperPanel>
-            <StepperPanel header="Data Summary">
-                <MetaData fileName={uploadedData} onSuccess={(result) => console.log('Metadata fetched: ', result)} />
+            <StepperPanel header="Analyze Schema">
+                <MetaData fileName={uploadedData} onSuccess={handleUploadSuccess} />
             </StepperPanel>
             <StepperPanel header="Business Need">
                 Business Need

@@ -1,10 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Toast } from 'primereact/toast';
+import { Skeleton } from 'primereact/skeleton';
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
+import { Divider } from 'primereact/divider';
 
 export default function MetaData({ fileName, onSuccess }) {
     const toast = useRef(null);
     const [metadata, setMetadata] = useState(null);
     const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         async function fetchMetaData() {
@@ -25,7 +30,7 @@ export default function MetaData({ fileName, onSuccess }) {
                         summary: 'Success',
                         detail: result.message || 'Successfully fetched metadata!',
                     });
-                    if (onSuccess) onSuccess(result);
+                    if (onSuccess) onSuccess(result.file_name);
                 } else {
                     const errorMessage = await response.text();
                     setError(errorMessage);
@@ -43,6 +48,8 @@ export default function MetaData({ fileName, onSuccess }) {
                     summary: 'Error',
                     detail: 'An error occurred while fetching metadata',
                 });
+            } finally {
+                setLoading(false);
             }
         }
 
@@ -51,33 +58,55 @@ export default function MetaData({ fileName, onSuccess }) {
         }
     }, [fileName, onSuccess]);
 
+    const transformDataTypes = () => {
+        if (!metadata || !metadata.data_types) return [];
+        return Object.entries(metadata.data_types).map(([key, value]) => ({
+            column: key,
+            dataType: value,
+        }));
+    };
+
+    const renderSkeletonRows = () => {
+        return Array.from({ length: 5 }).map((_, i) => ({
+            column: <Skeleton width="10rem" key={`column-${i}`} />,
+            dataType: <Skeleton width="8rem" key={`datatype-${i}`} />,
+        }));
+    };
+
     return (
         <div>
-            <h3>Data Summary</h3>
             <Toast ref={toast} />
-            
-            {/* Show loading message */}
-            {!metadata && !error && <p>Loading metadata...</p>}
-            
-            {/* Show metadata if available */}
-            {metadata && (
+
+            {loading && !error && (
                 <div>
-                    <h4>Metadata</h4>
-                    <p><strong>File Size:</strong> {metadata.file_size} bytes</p>
-                    <p><strong>Last Modified:</strong> {metadata.last_modified}</p>
-                    <p><strong>Row Count:</strong> {metadata.row_count}</p>
-                    <p><strong>Columns:</strong></p>
-                    <ul>
-                        {metadata.columns.map((col) => (
-                            <li key={col}>
-                                {col} ({metadata.data_types[col]})
-                            </li>
-                        ))}
-                    </ul>
+                    <h2>Metadata</h2>
+                    <Skeleton width="15rem" height="1rem" className="mb-2" />
+                    <Skeleton width="10rem" height="1rem" className="mb-2" />
+                    <Skeleton width="12rem" height="1rem" className="mb-2" />
+                    <Divider />
+                    <h2>Schema</h2>
+                    <DataTable value={renderSkeletonRows()} showGridlines>
+                        <Column field="column" header="Column Name" />
+                        <Column field="dataType" header="Data Type" />
+                    </DataTable>
                 </div>
             )}
 
-            {/* Show error message if there is an error */}
+            {!loading && metadata && (
+                <div>
+                    <h2>Metadata</h2>
+                    <p><strong>File Size:</strong> {metadata.file_size / 1000000} MBs</p>
+                    <p><strong>Last Modified:</strong> {metadata.last_modified}</p>
+                    <p><strong>Row Count:</strong> {metadata.row_count}</p>
+                    <Divider />
+                    <h2>Schema</h2>
+                    <DataTable value={transformDataTypes()} size='small' showGridlines>
+                        <Column field="column" header="Column Name" />
+                        <Column field="dataType" header="Data Type" />
+                    </DataTable>
+                </div>
+            )}
+
             {error && (
                 <div style={{ color: 'red' }}>
                     <p>Error: {error}</p>
