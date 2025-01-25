@@ -1,28 +1,26 @@
 from fastapi import Request, UploadFile
 
 
-# Upload file to AWS S3 bucket
-def upload_file(request: Request, file: UploadFile, bucket_name: str, prefix: str):
+# Upload file
+def upload_file(request: Request, file: UploadFile, bucket_name: str, key: str):
     try:
         logger = request.app.state.logger
         s3_client = request.app.state.s3_client
         
         if not s3_client:
             raise Exception("AWS S3 client is not initialized!")
-
-        file_name = file.filename
         
-        s3_client.upload_fileobj(file.file, bucket_name, f"{prefix}{file_name}")
+        s3_client.upload_fileobj(file.file, bucket_name, key)
         logger.info("File successfully uploaded!")
         
-        return {"file_name": file_name, "prefix": prefix, "s3_uri": f"s3://{prefix}{file_name}"}
+        return True
     except Exception as e:
         logger.error(f"Failed to upload file: {str(e)}")
         raise Exception(f"Failed to upload file: {str(e)}")
 
 
-# Fetch file details from AWS S3
-def fetch_details(request: Request, file_name: str, bucket_name: str, prefix: str):
+# Fetch file
+def fetch_details(request: Request, bucket_name: str, key: str):
     try:
         logger = request.app.state.logger
         s3_client = request.app.state.s3_client
@@ -30,7 +28,7 @@ def fetch_details(request: Request, file_name: str, bucket_name: str, prefix: st
         if not s3_client:
             raise Exception("S3 client is not initialized!")
         
-        response = s3_client.head_object(Bucket=bucket_name, Key=f"{prefix}{file_name}")
+        response = s3_client.head_object(Bucket=bucket_name, Key=key)
         logger.info("Successfully fetched details!")
 
         return response
@@ -39,6 +37,48 @@ def fetch_details(request: Request, file_name: str, bucket_name: str, prefix: st
         raise Exception(f"Failed to fetch details: {str(e)}")
 
 
+# Combine files
+def combine_files(request: Request, bucket_name: str, key: str):
+    try:
+        logger = request.app.state.logger
+        s3_client = request.app.state.s3_client
+        
+        if not s3_client:
+            raise Exception("S3 client is not initialized!")
+
+        response = s3_client.list_objects_v2(Bucket=bucket_name, Prefix=f"{key}/")
+
+        part_files = [obj["Key"] for obj in response.get("Contents", [])]
+
+        if not part_files:
+            raise Exception(f"No files found in folder '{key}/'")
+
+        csv_parts = [file for file in part_files if "part-" in file]
+
+        if not csv_parts:
+            raise Exception(f"No part files found to combine in folder '{key}/'")
+
+        final_file_key = key.rstrip("/")
+        with open("/tmp/combined.csv", "wb") as combined_file:
+            for part_file in csv_parts:
+                obj = s3_client.get_object(Bucket=bucket_name, Key=part_file)
+                combined_file.write(obj["Body"].read())
+
+        with open("/tmp/combined.csv", "rb") as combined_file:
+            s3_client.put_object(Bucket=bucket_name, Key=final_file_key, Body=combined_file)
+
+        delete_objects = [{"Key": obj} for obj in part_files]
+        s3_client.delete_objects(Bucket=bucket_name, Delete={"Objects": delete_objects})
+
+        logger.info(f"Successfully combined part files into '{final_file_key}'.")
+        return True
+
+    except Exception as e:
+        logger.error(f"Failed to combine partition files: {str(e)}")
+        raise Exception(f"Failed to combine partition files: {str(e)}")
+
+
+# Clone files
 def clone_file(request: Request, file_name: str, source_bucket_name: str, destination_bucket_name: str):
     try:
         logger = request.app.state.logger
@@ -56,6 +96,7 @@ def clone_file(request: Request, file_name: str, source_bucket_name: str, destin
         raise Exception(f"Failed to copy file: {str(e)}")
 
 
+# List files
 def list_files(request: Request, bucket_name: str):
     try:
         logger = request.app.state.logger

@@ -6,7 +6,9 @@ load_dotenv()
 class Settings:
     # AWS Configuration
     AWS_S3_BUCKET = os.getenv("AWS_S3_BUCKET")
-    AWS_S3_EX_SOURCE_BUCKET = os.getenv("AWS_S3_EX_SOURCE_BUCKET")
+    AWS_BASE_LAYER = os.getenv("AWS_BASE_LAYER")
+    AWS_INTERMEDIATE_LAYER = os.getenv("AWS_INTERMEDIATE_LAYER")
+    AWS_FINAL_LAYER = os.getenv("AWS_FINAL_LAYER")
     AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
     AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
     AWS_REGION = os.getenv("AWS_REGION")

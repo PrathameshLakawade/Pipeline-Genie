@@ -6,14 +6,15 @@ from configuration.s3_connection import initialize_s3_connection
 from configuration.spark_session import initialze_spark_session
 from configuration.database import initialize_database_connection
 
-from api.s3 import router as s3_router
-from api.data_pipeline import router as data_pipeline_router
+from api.extract import router as extract_router
+from api.transform import router as transform_router
 
 
 def app_factory() -> FastAPI:
     async def lifespan(app: FastAPI):
         app.state.logger = await initialize_logger()
         logger = app.state.logger
+        
         logger.info("Starting Pipeline Genie Application!")
         
         app.state.s3_client = await initialize_s3_connection(app)
@@ -39,8 +40,9 @@ def app_factory() -> FastAPI:
         allow_headers=["*"],
     )
 
-    app.include_router(s3_router, prefix="/s3", tags=["S3"])
-    app.include_router(data_pipeline_router, prefix="/data-pipeline", tags=["Data Pipeline"])
+    app.include_router(extract_router, prefix="/extract", tags=["Extract"])
+    app.include_router(transform_router, prefix="/transform", tags=["Transform"])
+
 
     @app.get("/")
     def root():
