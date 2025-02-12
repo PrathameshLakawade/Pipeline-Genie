@@ -107,7 +107,7 @@ export default function Uploader({ onSuccess }) {
             <div className="flex align-items-center flex-column">
                 <i className="pi pi-file mt-3 p-5" style={{ fontSize: '5em', borderRadius: '50%', backgroundColor: 'var(--surface-b)', color: 'var(--surface-d)' }}></i>
                 <span style={{ fontSize: '1.2em', color: 'var(--text-color-secondary)' }} className="my-5">
-                    Drag and Drop CSV Files Here
+                    Choose or Drop CSV Files Here
                 </span>
             </div>
         );
@@ -148,7 +148,7 @@ export default function Uploader({ onSuccess }) {
             {/* Loader */}
             {loading && (
                 <>
-                    <p className='mt-4'>Uploading file and initiating schema analysis process!</p>
+                    <h3 className='mt-4'>Uploading File(s) and Initiating Schema Analysis Process</h3>
                     <ProgressBar className='mt-2' mode="indeterminate" style={{ height: '0.5rem' }} />
                 </>
             )}

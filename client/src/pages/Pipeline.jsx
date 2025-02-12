@@ -26,7 +26,7 @@ export default function Pipeline() {
             {/* Section for displaying avatar and name */}
             <div className="grid">
                 <div className="col-1">
-                    <Avatar image={Genie} size="large" shape="circle" />
+                    <Avatar image={Genie} size="xlarge" shape="circle" />
                 </div>
                 <div className="col-4">
                     <h1>Pipeline Genie</h1>

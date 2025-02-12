@@ -85,9 +85,9 @@ export default function MetaData({ id, onSuccess }) {
                     {/* Data Details */}
                     <h2>Details</h2>
                     <p><strong>Upload Location:</strong> {metadata.s3_uri}</p>
-                    <p><strong>File Size:</strong> {metadata.size / 1000000} MBs</p>
-                    <p><strong>Last Modified:</strong> {metadata.last_modified}</p>
-                    <p><strong>Row Count:</strong> {metadata.rows}</p>
+                    <p><strong>File Size:</strong> {(metadata.size / 1000000).toFixed(2)} MBs</p>
+                    <p><strong>Last Modified:</strong> {new Date(metadata.last_modified).toLocaleDateString("en-US", { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                    <p><strong>Row Count:</strong> {metadata.rows.toLocaleString()}</p>
 
                     <Divider />
 
@@ -98,7 +98,7 @@ export default function MetaData({ id, onSuccess }) {
                         <Column field="dataType" header="Data Type(s)" />
                     </DataTable>
 
-                    <p className='mt-4'>Please check the details and schema of the uploaded dataset and provide a confirmation to initiate data cleaning</p>
+                    <h3 className='mt-4'>Verify the Details and Schema of the Uploaded File(s) and Provide a Confirmation to Initiate Data Cleaning</h3>
                     <Button onClick={() => onSuccess(id)} label="Confirm" severity="secondary" rounded />
                 </div>
             )}
