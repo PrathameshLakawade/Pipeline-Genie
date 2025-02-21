@@ -21,6 +21,16 @@ Pipeline-Genie is an intelligent data pipeline that processes CSV datasets, iden
     - Other relevant ETL processes
 6. **Final CSV Generation**: A transformed CSV is generated and stored in AWS S3 for user download.
 
+## **Screenshots & Visuals**
+### CSV Upload
+![CSV Upload][docs/select-csv.png]
+
+### Schema Detection
+![Schema Detection][docs/infer-schema.png]
+
+### Business Insights
+![Business Insights][docs/business-need.png]
+
 # **Installation & Setup**
 ## **Prerequisites**
 - Python 3.8+

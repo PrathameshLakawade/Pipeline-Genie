@@ -64,6 +64,7 @@ def generate_business_needs(request: Request, rows: int, columns: list):
                 try:
                     json_obj = json.loads(response["message"]["content"])
                     logger.info("Successfully generated business needs!")
+                    
                     return json_obj
                 except json.JSONDecodeError:
                     logger.error("LLaMA returned invalid JSON.")
