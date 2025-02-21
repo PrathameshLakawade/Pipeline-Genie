@@ -23,13 +23,13 @@ Pipeline-Genie is an intelligent data pipeline that processes CSV datasets, iden
 
 ## **Screenshots & Visuals**
 ### CSV Upload
-![CSV Upload][./docs/select-csv.png]
+![CSV Upload](./docs/select-csv.png)
 
 ### Schema Detection
-![Schema Detection][./docs/infer-schema.png]
+![Schema Detection](./docs/infer-schema.png)
 
 ### Business Insights
-![Business Insights][./docs/business-need.png]
+![Business Insights](./docs/business-need.png)
 
 # **Installation & Setup**
 ## **Prerequisites**
