@@ -41,17 +41,17 @@ Pipeline-Genie is an intelligent data pipeline that processes CSV datasets, iden
 
 ## **Backend Setup**
 1. Clone the respository:
-```
-git clone https://github.com/your-repo/pipeline-genie.git
+```sh
+git clone https://github.com/PrathameshLakawade/Pipeline-Genie.git
 ```
 2. Create a virtual environment and install dependencies:
-```
+```sh
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r server/requirements.txt
 ```
 3. Set up environment variables(Create `.env` file inside `server` folder):
-```
+```sh
 # AWS Configuration
 AWS_S3_BUCKET='your_aws_s3_bucket'
 AWS_BASE_LAYER='your_base_layer_name'
@@ -76,22 +76,22 @@ SPARK_DRIVER_MEMORY='2g'
 SPARK_EXECUTOR_MEMORY='2g'
 ```
 4. Start the FastAPI backend:
-```
+```sh
 cd server
 uvicorn main:app --reload
 ```
 
 ## Frontend Setup
 1. Navigate to the frontend directory:
-```
+```sh
 cd ../client
 ```
 2. Install dependencies:
-```
+```sh
 npm install
 ```
 3. Start the React app:
-```
+```sh
 npm start
 ```
 
